@@ -83,7 +83,7 @@
 	</div>
 	<script>
 		$(function(){
-			var socket = io.connect();
+			var socket = io.connect({"transports":['websocket']});
 			var myUser = '';
 			var $messageForm = $('#messageForm');
 			var $message = $('#message');
