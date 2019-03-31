@@ -21,16 +21,12 @@ app.use(cookieParser());
 const config = require('./config/config.js');
 
 
-
-
 app.engine( 'hbs', hbs( { 
   extname: 'hbs', 
   defaultLayout: 'main', 
   layoutsDir: __dirname + '/views/layouts/',
   partialsDir: __dirname + '/views/partials/'
 } ) );
-
-
 
 
 var options = {
@@ -69,15 +65,10 @@ app.set( 'view engine', 'hbs' );
 
 users = [];
 connections = [];
-clients = {};
 
 
-
-
-server.listen(process.env.PORT || 9080);
+server.listen(process.env.PORT || 3000);
 console.log('Server running...');
-
-
 
 const connection = mysql.createConnection({
 	host: config.databaseOptions.host,
@@ -93,7 +84,7 @@ connection.connect();
 //testing connnection 
 connection.query('SELECT * FROM Users', function(err, rows, fields) {
 	if (err) throw err;
-	console.log("DB is connected");
+	console.log("Connected to PeerMentoring Database.");
 }); 
 
 
@@ -126,6 +117,17 @@ passport.use(new localStrategy(
 ));
 
 
+// ,md5(passwordEntered)
+
+
+// function(req, res){
+// 	 		if(error) throw error;
+  
+// 	  res.redirect('profile');
+// 	});
+
+// };
+
 //-----------------------------------------------------------------------------
 //	Index
 //-----------------------------------------------------------------------------
@@ -137,7 +139,6 @@ app.get('/', function(req, res){
 //-----------------------------------------------------------------------------
 //	Login
 //-----------------------------------------------------------------------------
-
 
 app.get('/login', function(req, res){
 	res.render('login');
@@ -158,12 +159,98 @@ app.get('/logout', function(req,res){
 	res.redirect('/');
 });
 
+//-----------------------------------------------------------------------------
+//	Programs
+//-----------------------------------------------------------------------------
+
+app.get('/programs', function(req, res) {
+	// if signed in, get programs 
+	if (req.isAuthenticated()) {
+		var userID = req.session.passport.user;
+		getPrograms(userID, req, function(err, data) {
+			if(err) throw err;
+			if (data) {
+				console.log(data);
+				res.render('programsWithUserInfo', {
+					program: data.ProgramName,
+					website: data.Website,
+					image_path: data.ProgramImage
+				});
+			} else {
+				console.log('Rendering programs without user logged in')
+				res.render('programs');
+			}
+		});
+	} else {
+
+	}
+});
+
+// Gets programs user is a part of, if any, based on a given UserID
+
+function getPrograms(id, req, callback) {
+	var query_str = 'SELECT ProgramName, Website, ProgramImage FROM Programs, Memberships WHERE Memberships.UserId = ' + id;
+	var array = [];
+	connection.query(query_str, function(err, rows, fields) {
+		if (err) callback(err, null);
+		Object.keys(rows).forEach(function(rows) {
+			array.push({
+				// do stuff here 
+			});
+		});
+		
+		callback(null, rows[0]);
+	})
+}
+
+app.post('/programs', function(req, res) {
+	var prgmName, prgmInfo, prgmWebsite, prgmPicture;
+
+	var form = new formidable.IncomingForm();
+	form.parse(req);
+
+	form.on('field', function(name, value) {
+		if (name == "programName") {
+			console.log("name: ", value);
+			prgmName = value;
+		} else if (name == "programPreview") {
+			console.log("info: ", value);
+			prgmInfo = value;
+		} else if (name == "programSite"){
+			console.log("website: ", value);
+			prgmWebsite = value;
+		}
+	})
+
+	form.on('fileBegin', function(name, file) {
+		file.path = __dirname + '/uploads/Programs/' + file.name;
+	});
+
+	form.on('file', function(name, file) {
+		console.log('Uploaded ' + file.name);
+		prgmPicture = file;
+	});
+
+	form.on('end', function() {
+		res.send("Form received!");
+	});
+	
+	connection.query('INSERT INTO Programs (ProgramName,Description,Image,Website) values (?,?,?,?)', [prgmName, prgmInfo, prgmPicture, prgmWebsite], function(error, results, fields) {
+		if (error) throw error;
+
+		connection.query('SELECT LAST_INSERT_ID() as program_id', function(error, results, fields) {
+			if (error) throw error;
+			const program_id = results[0];
+			console.log(program_id);
+			
+		});
+	});
+});
 
 
 //-----------------------------------------------------------------------------
 //	Chat
 //-----------------------------------------------------------------------------
-
 
 app.get('/chat', function(req, res){
 	res.render('chat');
@@ -171,9 +258,8 @@ app.get('/chat', function(req, res){
 
 
 //-----------------------------------------------------------------------------
-//	Register
-//-----------------------------------------------------------------------------
-
+//	registration
+// -----------------------------------------------------------------------------
 
 app.get('/register', function(req, res, next) {
 	//res.send('register');
@@ -193,11 +279,11 @@ app.post('/register', function(req, res) {
 	connection.query('INSERT INTO Users (Username,Password,Email,FirstName,LastName,DOB) values (?,?,?,?,?,?)', [username,password,email,fname,lname,DOB],function(error,results,fields) {
 		if(error) throw error;
 
-		connection.query('SELECT LAST_INSERT_ID() ', function(error,results,fields) {
+		connection.query('SELECT LAST_INSERT_ID() as user_id', function(error,results,fields) {
 			if(error) throw error; 
 			const user_id = results[0];
-			req.login(user_id, function(error) {
-				res.redirect('login');
+			req.login(user_id, function(err) {
+				res.redirect('/profile');
 			});
 			// res.render('profile');
 		});
@@ -220,7 +306,7 @@ passport.deserializeUser(function(user_id,done){
 app.get('/profile', authenticationMiddleware(), function(req, res, next){
 	var id = req.session.passport.user;
 	getProfile(id, req,function(err,data) {
-	//	if(err) throw err;
+		if(err) throw err;
 		console.log('Directing to profile,' + data.Username + '\'s data loaded.');
 		res.render('profile', {
 			username:data.Username,
@@ -244,6 +330,7 @@ function getProfile(id, req, callback) {
 		callback(null, rows[0])
 	});
 }
+
 app.get('/profileUpdate', function(req, res){
 	var id = req.session.passport.user;
 	getProfile(id, req,function(err,data) {
@@ -308,124 +395,20 @@ function updateProfile(username, firstname, lastname, email, dob, oldpassword, p
 }
 
 //-----------------------------------------------------------------------------
-//	Programs
-//-----------------------------------------------------------------------------
-
-app.get('/programs', function(req, res) {
-	res.render('programs');
-});
-
-app.post('/programs', function(req, res) {
-	var prgmName, prgmInfo, prgmWebsite, prgmPicture;
-
-	var form = new formidable.IncomingForm();
-	form.parse(req);
-
-	form.on('field', function(name, value) {
-		if (name == "programName") {
-			console.log("name: ", value);
-			prgmName = value;
-		} else if (name == "programPreview") {
-			console.log("info: ", value);
-			prgmInfo = value;
-		} else if (name == "programSite"){
-			console.log("website: ", value);
-			prgmWebsite = value;
-		}
-	})
-
-	form.on('fileBegin', function(name, file) {
-		file.path = __dirname + '/uploads/' + file.name;
-	});
-
-	form.on('file', function(name, file) {
-		console.log('Uploaded ' + file.name);
-		prgmPicture = file;
-	});
-
-	form.on('end', function() {
-		res.send("Form received!");
-	});
-
-	connection.query('INSERT INTO Programs (ProgramName,Description,Image,Website) values (?,?,?,?)', [prgmName, prgmInfo, prgmPicture, prgmWebsite], function(error, results, fields) {
-		if (error) throw error;
-
-		connection.query('SELECT LAST_INSERT_ID() as program_id', function(error, results, fields) {
-			if (error) throw error;
-			const program_id = results[0];
-			console.log(program_id);
-
-		});
-	});
-});
-
-
-
-
-
-//-----------------------------------------------------------------------------
-//	Survey
-//-----------------------------------------------------------------------------
-
-app.get('/survey', authenticationMiddleware(), function(req, res){
-
-	res.render('survey', {title:'Survey'});
-});
-app.post('/survey', authenticationMiddleware(), function(req, res){
-	var id = req.session.passport.user;
-	const answer1 = req.body.A1;
-	const answer2 = req.body.A2;
-	const answer3 = req.body.A3;
-	const answer4 = req.body.A4;
-	const answer5 = req.body.A5;
-	const answer6 = req.body.A6;
-	const answer7 = req.body.A7;
-	const answer8 = req.body.A8;
-	const answer9 = req.body.A9;
-	// const answer10 = req.body.A10;
-	// const answer11 = req.body.A11;
-	// const answer12 = req.body.A12;
-	
-	const answer10 = " ";
-	const answer11 = " ";
-	const answer12 = " ";
-	const answer13 = req.body.A13;
-	const answer14 = req.body.A14;
-	const answer15 = req.body.A15;
-
-	connection.query('INSERT INTO UserSurveyResults VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [id, answer1,answer2, answer3, answer4, answer5, answer6, answer7, answer8,answer9, answer10, answer11, answer12, answer13, answer14, answer15 ], function(error, results, fields) {
-		if (error) throw error;
-		console.log('survey results saved.');
-	}
-		
-	);
-	res.redirect('programs');
-});
-
-
-//-----------------------------------------------------------------------------
 //	Functions
 //-----------------------------------------------------------------------------
 
-
-
 function authenticationMiddleware () {  
 	return (req, res, next) => {
-	//	console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
-
+	    console.log(`Current UserID: ${JSON.stringify(req.session.passport.user)}`);
 	    if (req.isAuthenticated()) return next();
-	    res.redirect('login');
+	    res.redirect('login')
 	}
 }
 
-
-//was getting error using middleware with the function below
-
-
-io.sockets.on('connection', function(socket){
+io.sockets.on('connection', authenticationMiddleware(), function(socket){
 
 	
-
 	connections.push(socket);
 	console.log('Connected: %s sockets connected', connections.length);
 	
@@ -443,20 +426,11 @@ io.sockets.on('connection', function(socket){
 		io.sockets.emit('new message', {msg: data, user: socket.username});
 	});
 	
-	// Send PM
-	socket.on('pm', function(data){
-		console.log(data);
-		io.to(clients[data.user].socket).emit('new pm', {msg: data.msg, user: socket.username});
-	});
-	
 	// New User
 	socket.on('new user', function(data, callback){
 		callback(true);
 		socket.username = data;
 		users.push(socket.username);
-		clients[data] = {
-			"socket": socket.id
-		};
 		updateUsernames();
 	});
 	
