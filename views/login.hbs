@@ -10,9 +10,14 @@
 
                         <h2>Login</h2>
                         <p>Please fill in your credentials to login.</p>
-
+                        {{#if showErrors}}
+                            <div class="alert alert-danger">
+                                {{ errors }}
+                            </div>
+                        {{/if}}
                         <form action="/program" method="post">
                             <!-- COMMENTS  -->
+
                             <div class="form-group">
                                 <label>Auburn User ID</label>
                                 <input type="text" name="username" class="form-control" value="">
@@ -25,7 +30,7 @@
                             </div>
 
                             <div class="form-group">
-                                <input type="submit" class="btn btn-primary" value="Login">
+                                <input type="submit" class="btn" value="Login">
                             </div>
 
                             <p>Don't have an account? <a style="color:orange;" onclick="window.location.href='register'"> Create one here</a>!</p>

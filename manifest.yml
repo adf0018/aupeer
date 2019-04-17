@@ -1,7 +1,7 @@
 ---
 applications:
 - name: aupeer
-  random-route: true
+  host: auburnPeerMentoringSD2019
   memory: 128M
   instances: 2
   

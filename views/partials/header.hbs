@@ -3,11 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>{{ title }}</title>
+        <title>Auburn Engineering Mentoring</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <style>
 body{
     color:black;
@@ -62,7 +62,81 @@ a:hover {
 }
 
         </style>
+<script>
+  $(document).ready(function(){ 
+      var arr = []; // List of users 
+      
+      $(document).on('click', '.msg_head', function() { 
+      var chatbox = $(this).parents().attr("rel") ;
+      $('[rel="'+chatbox+'"] .msg_wrap').slideToggle('slow');
+      return false;
+      });
+      
+      
+      $(document).on('click', '.close', function() { 
+      var chatbox = $(this).parents().parents().attr("rel") ;
+      $('[rel="'+chatbox+'"]').hide();
+      arr.splice($.inArray(chatbox, arr), 1);
+      displayChatBox();
+      return false;
+      });
+      
+      $(document).on('click', '#sidebar-user-box', function() {
+      
+      var userID = $(this).attr("class");
+      var username = $(this).children().text() ;
+      
+      if ($.inArray(userID, arr) != -1)
+      {
+        arr.splice($.inArray(userID, arr), 1);
+        }
+      
+      arr.unshift(userID);
+      chatPopup =  '<div class="msg_box" style="right:270px" rel="'+ userID+'">'+
+        '<div class="msg_head">'+username +
+        '<div class="close">x</div> </div>'+
+        '<div class="msg_wrap"> <div class="msg_body"> <div class="msg_push"></div> </div>'+
+        '<div class="msg_footer"><textarea class="msg_input" rows="4"></textarea></div>  </div>  </div>' ;     
+        
+        $("body").append(  chatPopup  );
+      displayChatBox();
+      });
+      
+      
+      $(document).on('keypress', 'textarea' , function(e) {       
+          if (e.keyCode == 13 ) {   
+            var msg = $(this).val();  
+            $(this).val('');
+            if(msg.trim().length != 0){    
+              var chatbox = $(this).parents().parents().parents().attr("rel") ;
+              $('<div class="msg-right">'+msg+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
+              $('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
+            }
+          }
+      });
+      
+      function displayChatBox(){ 
+        i = 270 ; // start position
+        j = 260;  //next position
+      
+        $.each( arr, function( index, value ) {  
+          if(index < 4){
+            $('[rel="'+value+'"]').css("right",i);
+            $('[rel="'+value+'"]').show();
+            i = i+j;    
+          } else{
+            $('[rel="'+value+'"]').hide();
+          }
+        });  
+      }  
+      
+  });
 
+$(window).on("unload", function () { 
+  $.get('/logout');
+});
+
+</script>
         <!-- Place favicon.ico in the root directory -->
     </head>
     <body>
@@ -74,7 +148,7 @@ a:hover {
          <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                 Auburn Mentoring Program
+                 Auburn Engineering Mentoring
                   
                 </div>
                 
@@ -96,18 +170,35 @@ a:hover {
                       <li class="nav-item">
                         <a class="nav-link" onclick="window.location.href='programs'">Programs</a>
                       </li>
-	                {{#if isAuthenticated}}
-	                 <!-- html here to show when logged in -->
-	                 <li class="nav-item">
-	                    <a class="nav-link" onclick="window.location.href='survey'">Survey</a>
-	                 </li>
-                   <li class="nav-item">
-                      <a class="nav-link" onclick="window.location.href='profile'">My Profile</a>
-                   </li>
-                      <li class="nav-item">
-                        <a class="nav-link disabled" onclick="window.location.href='chat'">ChatSystem</a>
-                      </li>
+	                {{#if isAuthenticated }}
+                      {{#unless Admin}}
+                      <!-- html here to show when logged in -->
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="window.location.href='survey'">Survey</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="window.location.href='profile'">My Profile</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link " onclick="window.location.href='chat'">ChatSystem</a>
+                        </li>
+                        {{/unless}}
+                  {{/if}}
+                    {{#if isAuthenticated}}
+                      {{#if Mentor}}
+                        <li class="nav-item">
+                          <a class="nav-link " onclick="window.location.href='resources'">Resources</a>
+                        </li>
                       {{/if}}
+                    {{/if}}
+
+                    {{#if isAuthenticated}}
+                      {{#if Admin}}
+                          <li class="nav-item">
+                            <a class="nav-link " onclick="window.location.href='admin'">Admin Dash</a>
+                          </li>
+                        {{/if}}
+                    {{/if}}
                     </ul>
                    <!--  <a style= "color:white" class="nav-link active" href="#">Home</a>
                         <a style= "color:white" class="nav-link" href="#">Programs</a>

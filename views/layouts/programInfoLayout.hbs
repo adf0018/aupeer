@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    
+    </head>
+{{> header }}
+
+<body>
+ <div class="container" style="padding:none;"> 
+<br>
+  <div class="jumbotron" style="background-image:url('images/colorlightsjumbo.jpg'); background-size: cover;">
+  <h2> {{progName}}</h2>
+  </div>
+      
+    <div class="row">
+      <div class="col-md-8 mb-5">
+        <h1>
+          About {{progName}}
+        </h1>
+        <hr>
+        <p>{{description}}</p>      
+      </div>
+      <div class="col-md-4 mb-5">
+        <h2>Contact Us</h2>
+        <p>{{website}}</p>
+
+        {{!-- <hr>
+        <address>
+          <strong>Start Bootstrap</strong>
+          <br>3481 Melrose Place
+          <br>Beverly Hills, CA 90210
+          <br>
+        </address>
+        <address>
+          <abbr title="Phone">P:</abbr>
+          (123) 456-7890--}}
+          <br>
+          <abbr title="Email">E:</abbr>
+          <a style="color:blue" href="mailto:#">name@example.com</a>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8 mb-5">      
+        <h2>
+          Additional Information
+        </h2>
+        <hr>
+        <p>Some quick example text to preview the program and make up the bulk of the card's content.
+          Some quick example text to preview the program and make up the bulk of the card's content.
+          Some quick example text to preview the program and make up the bulk of the card's content.
+          Some quick example text to preview the program and make up the bulk of the card's content.
+          Some quick example text to preview the program and make up the bulk of the card's content.
+          Some quick example text to preview the program and make up the bulk of the card's content.
+          Some quick example text to preview the program and make up the bulk of the card's content.
+        </p>
+      </div>
+      <div class="col-md-4 mb-5">
+        <h2>Interested in joining?</h2>
+        <a href="#" class="btn btn-primary" style="border-style:none;">Join</a> 
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8 mb-5">
+        <h4>
+          Documents
+        </h4>
+        <hr>
+        <p>documents go here</p>
+      </div>
+    </div>
+  </div> <!--container -->
+
+</body>
+{{> footer-end }}
+</html>

@@ -1,0 +1,84 @@
+<h1>{{title}}</h1>
+<br>
+
+{{#if program}}
+  <div class="container" style="padding: 0px;">
+    <span>
+      <h3 style="color:#3E4F5B">Memberships</h3>
+    </span>
+    <div class="card-row" style="display:flex;flex-wrap:wrap;flex-direction:row;justify-content:flex-start;margin: -8px;">
+       {{#if memberProgram}}
+        <div class="horizontal-card" style="border-style: solid;border-width: 0.5px;padding: 10px;border-color: #D6D6D6;border-radius: 5px;margin: 10px;width:30%">
+          <img src="/uploads/programImages/{{image_path}}" alt="placeholder" width="50" height="50" style="border-radius:50%">
+          <div style="float:right;margin:13px;width:auto;">
+            <h5 style="display:">{{ program }}</h5>
+          </div>
+        </div>
+        {{/if}}
+    </div>
+  </div>
+{{/if}}
+<br>
+<br>
+<div class="container" style="padding: 0px;">
+  <h3 style="color:#3E4F5B">All Programs</h3>
+  <br>
+  <div class="row">
+   {{#each programs}}
+    <div class="card" style="width:31%;padding:10pt;margin-right:15pt;margin-bottom:15pt;">
+      <img src="/uploads//programImages/{{ProgramImage}}" class="card-img-top" alt="100%x200">
+      <div class="card-body">
+        <h5 class="card-title">{{ProgramName}}</h5>
+        <p class="card-text">{{{Description}}}</p>
+        <a href="programInfo?id={{ProgramID}}" class="btn btn-primary" style="border-style:none;">Join</a> <!-- link to external organization's homepage -->
+        <a href="programInfo?id={{ProgramID}}" class="btn btn-primary" style="border-style:none;">Learn more</a>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+    <!-- next card would go here; consider dynamic rendering -->
+  </div>
+</div>
+<br>
+<button class="btn btn-primary" onclick="show_popup()" style="border-style:none;border-radius:50%;float:right;font-size:20px;margin:16px;width:40px;height:40px">+</button>
+<br>
+<br>
+<br>
+<div class="popup-form" id="addProgram" style="display:none;width:500px;position:fixed;top:40%;left:50%;margin-left:-200px;margin-top:-200px;margin-bottom:137px;z-index:9;bottom:-10px;">
+<div style="padding-left:10px;background-color:#03244d;color:white;border-bottom-color:#dd550c;border-bottom-style:solid;border-bottom-width:2px;">
+    &nbsp;<h3>Add Program</h3>
+</div>
+<form action="/programs" method="post" enctype="multipart/form-data" id="addProgramForm" class="form-container" style="max-height:100%;max-width:100%;padding:10px;background-color:white;">
+    <label for="programName"><b>Program</b></label>
+    <br>
+    <input type="text" placeholder="Name of program" id="programName" name="programName" required>
+    <br>
+    <label for="programPreview"><b>Description</b></label>
+    <br>
+    <input type="text" placeholder="Some information about the program" id="programPreview" name="programPreview" required>
+    <br>
+    <label for="programSite"><b>Website</b></label>
+    <br>
+    <input type="text" id="programSite" name="programSite" placeholder="http://www.example.com" required>
+    <br>
+    <label for="programPhoto"><b>Picture</b></label>
+    <br>
+    <input type="file" accept=".jpeg,.png" id="programPhoto" name="programPhoto">
+    <br>
+    <br>
+    <button type="submit" class="btn">Submit</button> &nbsp;
+    <button type="button" class="btn" onclick="hide_popup()">Cancel</button>
+</form>
+</div>
+<script>
+  function show_popup() {
+      document.getElementById('addProgram').style.display = "block";
+  }
+  function hide_popup() {
+      document.getElementById('addProgram').style.display = "none";
+  }
+  function submitForm() {
+      document.getElementById('addProgramForm').submit();
+      document.getElementById('addProgram').style.display = "none";
+  }
+</script>

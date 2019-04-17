@@ -1,12 +1,21 @@
-<html>
+
 <head>
-	<title>Auburn Mentoring - Update Profile</title>
-	<link rel='stylesheet' href='css/profile.css' type='text/css'>
-	<link type="text/javascript" src="server.js">
-</head>
+
+	<link rel='stylesheet' href='/css/profile.css' type='text/css'>
+	<style type="text/css">
+		.hidden {
+			display:none;
+		}
+		.hiding {
+			display:none;
+		}
+		.unhidden {
+			display: inline;
+		}
+	</style>
+	</head>
 <body>
 <div class="profileBox">
-	
 		<p>Enter information below that you would like to change.</p><br>
 		<form action='/' method='POST'>
 
@@ -22,7 +31,7 @@
 		<div class="userInfo">
 			
 			<label for='firstname'>First Name: </label>
-			<input type='text' name='firstname' value= '{{ firstname }}'>
+			<input type='text' pattern='[A-Za-z]{1,25}' title='No numbers or special characters, <25 characters' name='firstname' value= '{{ firstname }}'>
 
 		</div>
 
@@ -30,7 +39,7 @@
 		<div class="userInfo">
 			
 			<label for='lastname'>Last Name: </label>
-			<input type='text' name='lastname' value= '{{ lastname }}'>
+			<input type='text' pattern='[A-Za-z]{1,25}' title='No numbers or special characters, <25 characters' name='lastname' value= '{{ lastname }}'>
 
 		</div>
 
@@ -38,42 +47,67 @@
 		<div class="userInfo">
 			
 			<label for='email'>E-mail: </label>
-			<input type='text' name='email'  value= '{{ email }}'>
+			<input type='email' name='email' value= '{{ email }}'>
 		
 		</div>
 		
-		<!-- Date of Birth -->
+		{{!-- <!-- Date of Birth -->
 		<div class="userInfo">
 			
 			<label for='dob'>Birthday: </label>
-			<input type='text' name='dob' value= '{{ dob }}'>
+			<input type='date' placeholder="MM/DD/YYYY" name='dob' value= '{{ dob }}'>
 		
-		</div>
+		</div> --}}
 		
 		<!-- Password Change -->
-		<div class="userInfo">
+		<div class='hidden' id='hidden'>
+			<div class="userInfo">
+				
+				<label for='oldpassword'>Old Password: </label>
+				<input type='Password' pattern=".{6,}" title="Six or more characters" name='oldpassword'>
 			
-			<label for='oldpassword'>Old Password: </label>
-			<input type='Password' name='oldpassword'>
-		
-		</div>
+			</div>
 
-		<div class="userInfo">
+			<div class="userInfo">
+				
+				<label for='password1'>Change Password: </label>
+				<input type='Password' pattern=".{6,}" title="Six or more characters" name='password1'>
 			
-			<label for='password1'>Change Password: </label>
-			<input type='Password' name='password1'>
-		
-		</div>
-		
-		<div class="userInfo">
+			</div>
 			
-			<label for='password2'>Confirm Password: </leabel>
-			<input type='Password' name='password2'>
+			<div class="userInfo">
+				
+				<label for='password2'>Confirm Password: </leabel>
+				<input type='Password' pattern=".{6,}" title="Six or more characters" name='password2'>
+			</div>
 		</div>
-		
-		<button type="submit" value = 'submit'>UPDATE</button>
-		<button type="button" onclick="window.location.href='profile'">CANCEL</button>
+		<a class= "btn" href="javascript:reveal('expand')" class='unhidden' id='notHiding'>Change Password</a>
+		<a  href="javascript:reveal('')" class='hidden' id='hiding'>Cancel Password Change</a>
+		<script type="text/javascript">
+			function reveal(command) {
+				if(command === 'expand') {
+					document.getElementById('hidden').className = 'unhidden';
+					document.getElementById('hiding').className = 'unhidden btn';
+					document.getElementById('notHiding').className = 'hidden';
+				} else {
+					document.getElementById('hidden').className = 'hidden';
+					document.getElementById('hiding').className = 'hidden';
+					document.getElementById('notHiding').className = 'unhidden';
+				}
+			}
+		</script>
+		<button class= "btn mx-2" type="submit" value = 'submit'>UPDATE</button>
+		<button class= "btn" type="button" onclick="redirect()">CANCEL</button>
+		<script>// Delays redirecting slightly to allow data to update
+			function redirect(){
+				var timer = setTimeout(function() {
+            	window.location.href='profile'
+        		}, 1000);
+			}
+		</script>
+
 		</form>
 </div>
+
+		<br><br><br><br><br><br>
 </body>
-</html>

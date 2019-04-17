@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Report</title>
+	<link type="text/javascript" src="server.js">
+	<style type="text/css">
+		.content {
+			color:blue;
+			
+		}
+		@media print {
+			body * {
+				visibility: hidden;
+			}
+			.printArea, .printArea * {
+				visibility: visible;
+			}
+			.printArea {
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="printArea">
+			<!-- Organizations Section -->
+			<div>
+				<h3 id='timeloaded'>Generated on </h3>
+				<script type="text/javascript">
+				var now = new Date();//.toDateString() + " - " + new Date().toLocaleTimeString();
+				document.getElementById('timeloaded').innerHTML += now;
+			</script>
+		</div>
+
+		<div>
+			<h5>Programs ({{ totalprograms }})</h5>
+			<ul id='programlist'>
+				<script type="text/javascript">
+					var prgcount = ('{{programlist}}').split(',').length;
+					document.getElementById('programlist').innerHTML += '<ul>';
+					for(var i=0; i<prgcount; i++){	
+						if(i%2) {
+							var program = ('{{programlist}}').split(',')[i-1];
+							var website = ('{{programlist}}').split(',')[i];
+							document.getElementById('programlist').innerHTML += '<li><a class="content" href="'+website+'">'+program+'</li>';
+						}
+					}
+					document.getElementById('programlist').innerHTML += '</ul>';
+				</script> <!-- Get's and displays the names of all organizations -->
+			</ul>
+		</div>
+		
+		<div>
+			<h5>Users</h5>
+			<ul>
+				<li># Users: {{ totalusers}}</li>
+				<ul id='accountflags'>User types:
+					<script type="text/javascript">
+						var mentees = ('{{accountflagscount}}').split(',')[0];
+						var mentors = ('{{accountflagscount}}').split(',')[1];
+						var alumni = ('{{accountflagscount}}').split(',')[2];
+						var admins = ('{{accountflagscount}}').split(',')[3];
+						document.getElementById('accountflags').innerHTML += '<li>Mentees: '+mentees+'</li>';
+						document.getElementById('accountflags').innerHTML += '<li>Mentors: '+mentors+'</li>';
+						document.getElementById('accountflags').innerHTML += '<li>Alumni: '+alumni+'</li>';
+						document.getElementById('accountflags').innerHTML += '<li>Admins: '+admins+'</li>';
+					</script>
+				</ul>
+				<li id='timeloaded'># Active Sessions: {{ sessionsonline }}</li>
+				<li>Male Users: {{ maleusers }}</li>
+				<li>Female Users: {{ femaleusers }}</li>
+				<li>Otherly Identified Users: {{ otherusers }}</li>
+				
+
+			</ul>
+			
+			<h3>Matching</h3>
+			<table>
+				<tr>
+					<th>% Students Matched</th><td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+</html>
