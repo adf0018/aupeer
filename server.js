@@ -1200,6 +1200,9 @@ app.post('/match', function(req, res, next){
 	});
 });
 
+//-------------------------------------------------------------------------------
+//	Admin
+//-------------------------------------------------------------------------------
 
 // To add a new statistic, add a SQL connection query to getAnalytics() in same format
 // Then, assign the desired results to a data['variable'] variable
@@ -1229,6 +1232,39 @@ app.get('/admin', authenticationMiddleware(), function(req, res, next) {
 			});
 		} 
 
+	});
+
+	app.post('/admin', authenticationMiddleware(), function(req, res, err) {
+		var id = req.session.passport.user;
+		const adminForm = new formidable.IncomingForm();
+		
+		adminForm.on('fileBegin', function(name, file) {
+			file.path = __dirname + '/uploads/AdminFiles/' + file.name;
+		});
+
+		adminForm.on('file', function(name, file) {
+			console.log('Uploaded ' + file.name);
+		});
+
+		var musrs = 'No Data', fusrs = 'No Data', ousrs = 'No Data';
+
+		getUserInfo(id, req, function(err, data) {
+			if(err) throw err;
+			if (data) {
+				getProgramInformation(id, req, function(err,progData) {
+					console.log('prog count : ' + progData.ProgramCount);
+					console.log('programInfo:' + progData.Programs);
+					console.log('matchingstatus: ' + progData.MatchingAlgStatus);
+
+					res.render('admin', {matchOn:progData.MatchingAlgStatus, 
+					progCount:progData.ProgramCount,
+					programInfo:progData.Programs,
+					mentees:progData.Mentees,
+					mentors:progData.Mentors
+					});
+				});
+			}
+		});
 	});
 
 	// res.redirect('/');

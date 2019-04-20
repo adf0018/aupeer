@@ -1,0 +1,410 @@
+<style>
+.switch {
+  font-size: 1rem;
+  position: relative;
+}
+.switch input {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  background: none;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  padding: 0;
+}
+.switch input + label {
+  position: relative;
+  min-width: calc(calc(2.375rem * .8) * 2);
+  border-radius: calc(2.375rem * .8);
+  height: calc(2.375rem * .8);
+  line-height: calc(2.375rem * .8);
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  vertical-align: middle;
+  text-indent: calc(calc(calc(2.375rem * .8) * 2) + .5rem);
+}
+.switch input + label::before,
+.switch input + label::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(calc(2.375rem * .8) * 2);
+  bottom: 0;
+  display: block;
+}
+.switch input + label::before {
+  right: 0;
+  background-color: #dee2e6;
+  border-radius: calc(2.375rem * .8);
+  transition: 0.2s all;
+}
+.switch input + label::after {
+  top: 2px;
+  left: 2px;
+  width: calc(calc(2.375rem * .8) - calc(2px * 2));
+  height: calc(calc(2.375rem * .8) - calc(2px * 2));
+  border-radius: 50%;
+  background-color: white;
+  transition: 0.2s all;
+}
+.switch input:checked + label::before {
+  background-color: greenyellow;
+}
+.switch input:checked + label::after {
+  margin-left: calc(2.375rem * .8);
+}
+.switch input:focus + label::before {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 136, 221, 0.25);
+}
+.switch input:disabled + label {
+  color: #868e96;
+  cursor: not-allowed;
+}
+.switch input:disabled + label::before {
+  background-color: #e9ecef;
+}
+.switch.switch-sm {
+  font-size: 0.875rem;
+}
+.switch.switch-sm input + label {
+  min-width: calc(calc(1.9375rem * .8) * 2);
+  height: calc(1.9375rem * .8);
+  line-height: calc(1.9375rem * .8);
+  text-indent: calc(calc(calc(1.9375rem * .8) * 2) + .5rem);
+}
+.switch.switch-sm input + label::before {
+  width: calc(calc(1.9375rem * .8) * 2);
+}
+.switch.switch-sm input + label::after {
+  width: calc(calc(1.9375rem * .8) - calc(2px * 2));
+  height: calc(calc(1.9375rem * .8) - calc(2px * 2));
+}
+.switch.switch-sm input:checked + label::after {
+  margin-left: calc(1.9375rem * .8);
+}
+.switch.switch-lg {
+  font-size: 1.25rem;
+}
+.switch.switch-lg input + label {
+  min-width: calc(calc(3rem * .8) * 2);
+  height: calc(3rem * .8);
+  line-height: calc(3rem * .8);
+  text-indent: calc(calc(calc(3rem * .8) * 2) + .5rem);
+}
+.switch.switch-lg input + label::before {
+  width: calc(calc(3rem * .8) * 2);
+}
+.switch.switch-lg input + label::after {
+  width: calc(calc(3rem * .8) - calc(2px * 2));
+  height: calc(calc(3rem * .8) - calc(2px * 2));
+}
+.switch.switch-lg input:checked + label::after {
+  margin-left: calc(3rem * .8);
+}
+.switch + .switch {
+  margin-left: 1rem;
+}
+ .list-group-item{
+	background-color: lightblue;
+}
+.card-header {
+	border:0%;
+	font-size: 30px;
+	background: 0%;
+
+}
+.floatMid{
+	display: flex;
+ 	align-items: center;
+}
+.remove{
+	background: #f44242;
+	color:white;
+}
+.add{
+	background: green;
+	color:white;
+}
+.match{
+	background: lightseagreen;
+	color:white;
+}
+#SendAlumni {
+	
+}
+#AddMentorMentee{
+} 
+</style>
+
+<div class="container">
+
+	<div class="row">	
+		<div class="col-sm-9">
+			<h1>Admin Dash</h1>
+			{{!-- {{#if 'progCount > 1'}}
+			<h6>Choose the Program you would like to modify:</h6>
+				<select>
+					{{#each program}}
+					<option>Prog 1</option>
+					{{/each}}
+				</select>
+		  
+			<h3>Program: {{selected}}</h3>
+			{{/if}} --}}
+
+			<h3>Program: {{programInfo}}</h3> 
+		</div>
+	</div>
+
+			{{#if matchOn}}
+			<div class="row">	
+			<div class="col-sm-9">
+				<div class="form-group form-inline">  
+			<h3>Dynamic Matching: &nbsp;&nbsp;&nbsp;</h3>
+			
+				<span class="switch switch-sm">
+				<input onclick="toggleMatchingOff()" type="checkbox" class="switch " id="switch-sm" checked>
+				<label for="switch-sm"></label>
+			</span>
+			</div>
+			</div>
+			</div>
+			<div class="row">
+			<div class="col-md-12">
+				<H5> Dynamic Matching ON, to turn it OFF hit the toggle switch above.</H5>
+			</div>
+			</div>
+		
+		{{else}}
+		<div class="row">	
+		<div class="col-sm-9">
+			<div class="form-group form-inline">  
+			<h3>Dynamic Matching: &nbsp;&nbsp;&nbsp;</h3>
+			
+			<span class="switch switch-sm">
+				<input onclick="toggleMatchingOn()"  type="checkbox" class="switch" id="switch-sm">
+				<label for="switch-sm"></label>
+			</span>
+		</div>
+			</div>
+		</div>
+			<div class="row">
+			<div class="col-md-12">
+				<H5> Dynamic Matching OFF, to turn in ON hit the toggle switch above.</H5>
+				 <form action="/match" method="POST"> 
+					<div class="form-row my-auto" style="padding: 5px 25px 25px 0px;"> 
+					 
+					<div class="form-group col-md-3">
+						<label for="mentee">Mentee Name</label>
+							<select name="menteeToAdd"  class="form-control">
+								{{#each mentees}}
+								<option name="menteeToAdd" value="{{MenteeID}}">{{MenteeNames}}</option>
+								{{/each}}
+							</select>
+						</div>
+						<div class="form-group col-md-3">
+							<label for="mentor">Mentor Name</label>
+							<select name="mentorToAdd"  class="form-control">
+								{{#each mentors}}
+								<option name="mentorToAdd" value="{{MentorID}}">{{MentorNames}}</option>
+								{{/each}}
+							</select> 
+						</div>
+
+						<div class="form-group col-md-2">
+							<label for="userProgram">Program Name</label>
+							<select name="userProgram" class="form-control">
+								<option> {{programInfo}}</option>
+							</select>
+						</div>
+					<div class="form-group col-md-2 my-auto" style="padding-top:15px" >
+							<button onclick="matchUsers()" class="btn match">Match Users</button>
+					</div>
+					</div>
+	
+					</form>
+
+				</div>
+				</div>
+	
+				{{/if}}
+{{!-- view mentees and mentors and remove  --}}
+	<div class="row ">
+		<div class="col-sm-5">
+			<div class="card">
+				<div class="card-header">
+					<p>{{programInfo}} Mentors</p>
+				</div>
+				<ul class="list-group ">
+					{{#each mentors}}
+					<li class="list-group-item">
+							{{MentorNames}}
+						<span class="float-right">
+							<button  onclick="removeUser('{{MentorID}}', '{{MenteeNames}}')" class="btn remove">Remove</button>
+						</span>
+					</li>
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+
+		<div class="col-sm-5">
+			<div class="card" >
+				<div class="card-header">
+					<p>{{programInfo}} Mentees</p>
+				</div>
+				<ul class="list-group ">
+				{{#each mentees}}
+					<li class="list-group-item">
+							{{MenteeNames}}
+						<span class="float-right">
+							<button onclick="removeUser('{{MenteeID}}', '{{MenteeNames}}')" class="btn remove">Remove</button>
+						</span>
+					</li>
+					{{/each}}
+				</ul>
+				</div>
+		</div>
+	
+			<div class="col-sm-2 floatMid"  >
+
+
+				<div class="d-flex flex-column">
+				
+				<div class="p-2">	<h4>Reports</h4>
+					<button class="btn " onclick="window.open('report')">Generate Report</button>
+				</div>
+				<div class="p-2">
+					<button class="btn " onclick="window.open('report')">Generate Report</button>
+				</div>
+				<div class="p-2">
+					<button class="btn " onclick="window.open('report')">Generate Report</button>
+				</div>
+				
+				<div class="p-2">
+					<hr>
+					<h4>Upload Files</h4>
+					<br>
+					<form action="/admin" enctype="multipart/form-data" method="POST">
+						<input type="file" accept=".docx,.doc,.pdf,.odt">
+						<input type="submit" value="Upload">
+					</form>
+				</div>
+				</div>
+				
+				
+			</div>
+	</div>
+{{!-- add user to program --}}
+	<div class="row">
+			<div class="col-sm-6" id="AddMentorMentee">
+					<h3>Add User to Program</h3>
+					<form action="addMember" method="POST">
+						<div class="form-row my-auto" style="padding: 5px 25px 25px 0px;"> 
+					 
+					<div class="form-group col-md-6">
+					
+						<input type="text" class="form-control" name="userToAdd">
+						</div>
+						{{!-- 4.13.19 Kate Kramer the system will not allow someone 
+						to be mentor and a mentee at the same  time --}}
+						{{!-- <div class="form-group col-md-4">
+							<select name="userRole" class="form-control">
+								<option> Mentee</option>
+								<option> Mentor</option>
+							</select>
+						</div> --}}
+						<div class="form-group col-md-4">
+							<select name="userProgram" class="form-control">
+								<option> {{programInfo}}</option>
+							</select>
+						</div>
+					<div class="form-group col-md-2">
+							<button onclick="addMember()" class="btn add">Add Member</button>
+						
+					</div>
+					</form>
+
+				</div>
+			</div>
+			
+	</div>
+{{!-- send alumni invites --}}
+	<div class="row">
+			<div class="col-sm-9" id="SendAlumni">
+					<h3>Send Alumni Invite</h3>
+				 <div class="form-row my-auto" style="padding: 5px 25px 25px 0px;"> 
+					 
+					<div class="form-group col-md-3">
+					First Name
+					<input type="text" class="form-control" id="alumniFirstName">
+					</div>
+					<div class="form-group col-md-3">
+						Last Name
+
+					<input type="text" class="form-control" id="alumniLastName">
+					</div>
+
+					<div class="form-group col-md-3">
+						Email
+
+					<input type="text" class="form-control" id="alumniEmail">
+					</div>
+					<div class="form-group col-md-3 my-auto">
+							<button class="btn add">Add Member</button>
+						
+					</div>
+				</div>
+			</div>
+			
+	</div>
+</div>	
+
+
+<script>  
+function removeUser(userID, userName) { 
+	var progID;
+	progID = "{{programInfo}}";
+	var retVal = confirm('You are about to remove '+userName+' from {{programInfo}}, are you sure you want to do this?');
+		if( retVal == true ) {
+
+			$.get('/removeUser?id='+userID + '&progID='+progID); 
+			location.reload();
+
+		}
+}
+function addMember(){
+	$.get('/addMember');
+}
+
+function toggleMatchingOn(){
+	var progID;
+	progID = "{{programInfo}}";
+
+		$.get('/toggleON?progID='+progID);
+	
+	location.reload();
+} 
+
+function toggleMatchingOff(){
+	var progID;
+	progID = "{{programInfo}}";
+
+		$.get('/toggleOFF?progID='+progID);
+	
+	location.reload();
+} 
+
+function matchUsers(){
+	$.post('/match');
+		//$.get('/match?user1='+user1+'&user2'+user2+'progID='+progID);
+	
+	location.reload();
+} 
+</script>
